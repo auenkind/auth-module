@@ -210,9 +210,14 @@ export class LocalScheme<
       return Promise.resolve()
     }
 
+    // if no endpoint was given use the configured user endpoint
+    if (!endpoint) {
+      endpoint = this.options.endpoints.user
+    }
+
     // Try to fetch user and then set
     return this.$auth
-      .requestWith(this.name, endpoint, this.options.endpoints.user)
+      .requestWith(this.name, endpoint)
       .then((response) => {
         const userData = getResponseProp(response, this.options.user.property)
         if (!userData) {
@@ -231,14 +236,15 @@ export class LocalScheme<
       })
   }
 
-  async logout(endpoint: HTTPRequest = {}): Promise<void> {
+  async logout(endpoint?: HTTPRequest): Promise<void> {
     // Only connect to logout endpoint if it's configured
     if (this.options.endpoints.logout) {
-      await this.$auth
-        .requestWith(this.name, endpoint, this.options.endpoints.logout)
-        .catch(() => {
-          //
-        })
+      if (!endpoint) {
+        endpoint = this.options.endpoints.logout
+      }
+      await this.$auth.requestWith(this.name, endpoint).catch(() => {
+        /* TODO: log this Error / notify User */
+      })
     }
 
     // But reset regardless
