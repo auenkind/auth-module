@@ -215,13 +215,13 @@ export class LocalScheme<
       .requestWith(this.name, endpoint, this.options.endpoints.user)
       .then((response) => {
         const userData = getResponseProp(response, this.options.user.property)
-        if(!userData) {
-          const error = new Error(`User Data response does not contain field ${this.options.user.property}`)
+        if (!userData) {
+          const error = new Error(
+            `User Data response does not contain field ${this.options.user.property}`
+          )
           return Promise.reject(error)
         } else {
-          this.$auth.setUser(
-            userData
-          )
+          this.$auth.setUser(userData)
           return response
         }
       })
